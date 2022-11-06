@@ -14,9 +14,9 @@ const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerH
 // RENDERER, holds The Camera, screen and all objects. 
 const renderer = new THREE.WebGLRenderer({ canvas });
 
-// Configure the renderer size and pixel ratio (need for responsive purposes)
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(window.devicePixelRatio);
+// Configure the renderer size and pixel ratio (renderer resolution)
+//  renderer.setSize(window.innerWidth, window.innerHeight); // canvas's drawingbuffer size
+// renderer.setPixelRatio(window.devicePixelRatio);
 
 // The default camera position is set to the middle, reposition it by setting the z position.
 // camera.position.z = 40 OR
@@ -66,7 +66,6 @@ function createStar() {
   const star = new THREE.Mesh(starGeometry, starMaterial);
 
   const [x, y, z] = Array(3).fill().map(() => THREE.MathUtils.randFloatSpread(300));
-  console.log(x, y, z)
   star.position.set(x, y, z);
   return star;
 }
@@ -93,6 +92,27 @@ moon.position.x = 30;
 
 scene.add(moon);
 
+// responsive aspects
+function resizeRendererToDisplaySize(renderer) {
+  const canvas = renderer.domElement;
+  const pixelRation = window.devicePixelRatio;
+
+  const width = canvas.clientWidth * pixelRation | 0;
+  const height = canvas.clientHeight * pixelRation | 0;
+  const needResize = canvas.width !== width || canvas.height !== height;
+
+  if (needResize) {
+    renderer.setSize(width, height, false);
+  }
+  return needResize;
+}
+// Update Camera projection
+function updateCameraProjection() {
+  const canvas = renderer.domElement;
+  canvas.aspect = canvas.clientWidth / canvas.clientHeight;
+  camera.updateProjectionMatrix();
+}
+
 // RENDER SCENE and  CAMERA
 function render() {
 
@@ -105,6 +125,11 @@ function render() {
   torus2.rotation.z += 0.01;
 
   moon.rotation.z += 0.002;
+
+  const needResize = resizeRendererToDisplaySize(renderer);
+  if (needResize) {
+    updateCameraProjection();
+  }
 
   orbitControl.update();
   renderer.render(scene, camera);

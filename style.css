@@ -1,7 +1,15 @@
-canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
+html,
+body {
+    /* Default 5px */
+    margin: 0;
     height: 100%;
+    overflow: hidden;
+}
+
+canvas {
+    /* Default 300*150 */
+    height: 100%;
+    width: 100%;
+    /* Default inline */
+    display: block;
 }
